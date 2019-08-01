@@ -71,17 +71,43 @@ public class NewsTitleFragment extends Fragment implements View.OnClickListener 
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.edit_button:
-                editButton.setText("取消");
-                selectAllButton.setVisibility(View.VISIBLE);
-                readedButton.setVisibility(View.VISIBLE);
-                deleteButton.setVisibility(View.VISIBLE);
-                readedButton.setEnabled(false);
-                readedButton.setTextColor(Color.parseColor("#CCCCCC"));
-                deleteButton.setEnabled(false);
-                deleteButton.setTextColor(Color.parseColor("#CCCCCC"));
+                if(editButton.getText().equals("编辑")) {
+                    editButton.setText("取消");
+                    selectAllButton.setVisibility(View.VISIBLE);
+                    readedButton.setVisibility(View.VISIBLE);
+                    deleteButton.setVisibility(View.VISIBLE);
+                    readedButton.setEnabled(false);
+                    readedButton.setTextColor(Color.parseColor("#CCCCCC"));
+                    deleteButton.setEnabled(false);
+                    deleteButton.setTextColor(Color.parseColor("#CCCCCC"));
+                } else {
+                    editButton.setText("编辑");
+                    selectAllButton.setVisibility(View.INVISIBLE);
+                    readedButton.setVisibility(View.INVISIBLE);
+                    deleteButton.setVisibility(View.INVISIBLE);
+                }
                 break;
             case R.id.selectall_button:
-                Toast.makeText(getActivity(),"这是全选功能",Toast.LENGTH_SHORT).show();
+                if(selectAllButton.getText().equals("全选")) {
+                    selectAllButton.setText("取消全选");
+                    readedButton.setEnabled(true);
+                    readedButton.setTextColor(Color.parseColor("#FFFFFF"));
+                    deleteButton.setEnabled(true);
+                    deleteButton.setTextColor(Color.parseColor("#FFFFFF"));
+                } else {
+                    selectAllButton.setText("全选");
+                    readedButton.setEnabled(false);
+                    readedButton.setTextColor(Color.parseColor("#CCCCCC"));
+                    deleteButton.setEnabled(false);
+                    deleteButton.setTextColor(Color.parseColor("#CCCCCC"));
+                }
+                break;
+            case R.id.readed_button:
+                Toast.makeText(getActivity(),"已读！",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.delete_main_button:
+                Toast.makeText(getActivity(),"删除成功！",Toast.LENGTH_SHORT).show();
+                break;
         }
     }
     /**

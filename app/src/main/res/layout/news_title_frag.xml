@@ -27,14 +27,14 @@
         <!--android:layout_marginLeft="100dp"实际为150dp比较合适-->
         <Button
             android:id="@+id/selectall_button"
-            android:layout_width="40dp"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="270dp"
             android:background="#000000"
             android:text="全选"
             android:textColor="#F8F8FF"
             android:textSize="14sp"
-            android:layout_marginLeft="290dp"
-            android:visibility="invisible"/>
+            android:visibility="invisible" />
         <Button
             android:id="@+id/readed_button"
             android:layout_width="40dp"
