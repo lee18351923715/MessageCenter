@@ -17,7 +17,7 @@
             <CheckBox
                 android:id="@+id/cb_button"
                 style="@style/CustomCheckBoxTheme"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
                 android:clickable="true"
@@ -26,7 +26,7 @@
                 android:scaleY="0.3"
                 android:visibility="invisible" />
 
-            <CheckBox
+            <!--<CheckBox
                 android:id="@+id/select_button"
 
                 android:layout_width="wrap_content"
@@ -37,7 +37,7 @@
                 android:focusable="true"
                 android:layout_gravity="center_vertical"
                 android:gravity="center_horizontal"
-                android:visibility="visible" />
+                android:visibility="visible" />-->
 
         </FrameLayout>
 

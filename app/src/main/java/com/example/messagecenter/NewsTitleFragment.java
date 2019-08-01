@@ -47,14 +47,15 @@ public class NewsTitleFragment extends Fragment implements View.OnClickListener 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         init();
         newsContenterFragment=new NewsContenterFragment();
-        //newsContenterFragment.setRefreshBtnListenrt(this);
         newsTitleRecyclerView.setLayoutManager(layoutManager);
         NewsAdapter adapter = new NewsAdapter(getNews());
         newsTitleRecyclerView.setAdapter(adapter);
         return view;
     }
 
-
+    /**
+     * 编辑等按钮功能实现
+     */
     public void init(){
         editButton = view.findViewById(R.id.edit_button);
         selectAllButton = view.findViewById(R.id.selectall_button);
@@ -83,14 +84,16 @@ public class NewsTitleFragment extends Fragment implements View.OnClickListener 
                 Toast.makeText(getActivity(),"这是全选功能",Toast.LENGTH_SHORT).show();
         }
     }
-    //初始化模拟新闻数据
+    /**
+     * 从数据库中初始化模拟新闻数据
+     * 将数据库的信息按倒序方式输出
+     */
     private List<News> getNews() {
         List<News> mNewsList = new ArrayList<>();
-
         Cursor cursor = getActivity().getContentResolver().query(MetaData.TableMetaData.CONTENT_URI,new String[]{ "id",MetaData.TableMetaData.FIELD_TITLE,MetaData.TableMetaData.FIELD_MESSAGE,
                MetaData.TableMetaData.FIELD_FLAG,MetaData.TableMetaData.FIELD_TIME,MetaData.TableMetaData.FIELD_TYPE},null,null,null);
         if(cursor == null){
-            //Toast.makeText(getActivity(),"当前没有数据",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(),"当前没有数据",Toast.LENGTH_SHORT).show();
             return null;
         }
         while (cursor.moveToNext()){
@@ -100,8 +103,6 @@ public class NewsTitleFragment extends Fragment implements View.OnClickListener 
             int flag = cursor.getInt(cursor.getColumnIndex("flag"));
             String time = cursor.getString(cursor.getColumnIndex("time"));
             int type = cursor.getInt(cursor.getColumnIndex("type"));
-            Log.d("数据:",id+","+title+","+message+","+flag+","+time+","+type);
-            //Toast.makeText(MainActivity.this,message,Toast.LENGTH_SHORT).show();
             News news = new News(id,title,message,flag,time,type);
             mNewsList.add(news);
         }
@@ -150,7 +151,7 @@ public class NewsTitleFragment extends Fragment implements View.OnClickListener 
             int i=0;
             while (cursor.moveToNext()){
                 int flag = cursor.getInt(cursor.getColumnIndex("flag"));//获取是否已读
-                if(flag == 0){                    //未读
+                if(flag == 0){
                     checkStatus.put(i,true);
                     visibleMap.put(i,View.VISIBLE);
                     i++;
@@ -168,22 +169,25 @@ public class NewsTitleFragment extends Fragment implements View.OnClickListener 
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.news_item,parent,false);
             final ViewHolder holder = new ViewHolder(view);
             view.setOnClickListener(new View.OnClickListener() {
-                @SuppressLint("ResourceAsColor")
                 @Override
                 public void onClick(View view) {
                     CheckBox titleCheckBox = view.findViewById(R.id.cb_button);
                     News news = mNewsList.get(holder.getAdapterPosition());
                     if(news.getFlag() == 0){
-                        //titleCheckBox.setBackgroundColor(R.color.colorPrimary);
                         titleCheckBox.setChecked(false);
+                    }else {
+                        titleCheckBox.setVisibility(View.INVISIBLE);
                     }
                     NewsContenterFragment newsContentFragment = (NewsContenterFragment)getFragmentManager().findFragmentById(R.id.news_content_fragment);
                     newsContentFragment.refresh(news.getTitle(),news.getMessage(), news.getType());
-//                    ContentValues values = new ContentValues();
-//                    values.put(MetaData.TableMetaData.FIELD_FLAG,1);
-//                    Uri uri = Uri.parse(MetaData.TableMetaData.CONTENT_URI.toString()+"/"+news.getId());
-//                    getActivity().getContentResolver().update(uri,values,null,null);
-//                    Toast.makeText(getContext(),news.getId()+"阅读完毕",Toast.LENGTH_SHORT).show();
+//                    if(news.getFlag()!=1){
+//                        ContentValues values = new ContentValues();
+//                        values.put(MetaData.TableMetaData.FIELD_FLAG,1);
+//                        Uri uri = Uri.parse(MetaData.TableMetaData.CONTENT_URI.toString()+"/"+(mNewsList.size()-news.getId()));
+//                        getActivity().getContentResolver().update(uri,values,null,null);
+//                        Toast.makeText(getContext(),news.getId()+"阅读完毕",Toast.LENGTH_SHORT).show();
+//                    }
+
                 }
             });
             return holder;

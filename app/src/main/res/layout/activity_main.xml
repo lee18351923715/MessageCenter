@@ -4,62 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!--<LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#000000"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="消息中心"
-            android:textColor="#F8F8FF"
-            android:textSize="20sp" />
-        <Button
-            android:id="@+id/selectall_button"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:background="#000000"
-            android:text="全选"
-            android:textColor="#F8F8FF"
-            android:textSize="16sp"
-            android:layout_marginLeft="100dp"
-            android:visibility="invisible"/>
-        <Button
-            android:id="@+id/readed_button"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:background="#000000"
-            android:text="已读"
-            android:textColor="#F8F8FF"
-            android:textSize="16sp"
-            android:layout_marginLeft="0dp"
-            android:visibility="invisible"/>
-        <Button
-            android:id="@+id/delete_main_button"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:background="#000000"
-            android:text="删除"
-            android:textColor="#F8F8FF"
-            android:textSize="16sp"
-            android:layout_marginLeft="0dp"
-            android:visibility="invisible"/>
-        <Button
-            android:id="@+id/edit_button"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:background="#000000"
-            android:text="编辑"
-            android:textColor="#F8F8FF"
-            android:textSize="16sp"
-            android:layout_marginLeft="0dp"/>
-
-
-
-    </LinearLayout>-->
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

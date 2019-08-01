@@ -1,7 +1,7 @@
 package com.example.messagecenter;
 
-import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,11 +14,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Random;
 
 public class NewsContenterFragment extends Fragment {
 
@@ -88,7 +83,8 @@ public class NewsContenterFragment extends Fragment {
                         break;
                 }
                 Toast.makeText(getContext(),"您收到一条消息，请尽快查收！",Toast.LENGTH_SHORT).show();
-                FragmentManager contentFragmentManager = getFragmentManager();
+                Intent intent=new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
 
             }
         });
@@ -162,9 +158,4 @@ public class NewsContenterFragment extends Fragment {
                 break;
         }
     }
-
-//    public void setRefreshBtnListenrt(View.OnClickListener onClickListener){
-//        refresh.setOnClickListener(onClickListener);
-//    }
-
 }

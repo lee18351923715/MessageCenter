@@ -1,7 +1,9 @@
 package com.example.messagecenter;
 
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -31,15 +33,22 @@ public class MainActivity extends AppCompatActivity {
     private Button queryAllButton;
     private Button deleteTechButton;
 
+
     private EditText titleText;
     private EditText messageText;
     private EditText typeText;
     private EditText idText;
 
+    private boolean isTag = true;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+            Intent intent = new Intent("com.example.messagecenter.STARTSERVICE");
+            intent.setComponent(new ComponentName("com.example.messagecenter","com.example.messagecenter.StartService"));
+            sendBroadcast(intent);
+
 
         //===============================设置编辑功能====================================
 //        final Button editButton = findViewById(R.id.edit_button);

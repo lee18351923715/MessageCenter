@@ -1,7 +1,5 @@
 package com.example.messagecenter;
 
-import java.util.Date;
-
 /**
  * 消息类
  * id       消息id
@@ -92,6 +90,18 @@ public class News {
         this.flag = flag;
         this.time = time;
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "News{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", message='" + message + '\'' +
+                ", flag=" + flag +
+                ", time='" + time + '\'' +
+                ", type=" + type +
+                '}';
     }
 }
 
