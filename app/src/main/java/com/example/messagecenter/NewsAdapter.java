@@ -59,18 +59,15 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         mNewsList = getNews();
         Cursor cursor = mContext.getContentResolver().query(MetaData.TableMetaData.CONTENT_URI,new String[]{ "id",
                 MetaData.TableMetaData.FIELD_FLAG,MetaData.TableMetaData.FIELD_TYPE},null,null,null);
-
         while (cursor.moveToNext()){
             int flag = cursor.getInt(cursor.getColumnIndex("flag"));//获取是否已读
             int id = cursor.getInt(cursor.getColumnIndex("id"));
             if(flag == 0){
                 checkStatus.put(id,true);
                 visibleMap.put(id,View.VISIBLE);
-
             }else if(flag == 1){
                 checkStatus.put(id,false);
-                visibleMap.put(id,View.INVISIBLE);
-
+                visibleMap.put(id, View.INVISIBLE);
             }
         }
         cursor.close();
@@ -85,6 +82,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             public void onClick(View view) {
                 CheckBox titleCheckBox = view.findViewById(R.id.cb_button);
                 News news = mNewsList.get(holder.getAdapterPosition());
+                checkStatus.put(news.getId(),false);
+                visibleMap.put(news.getId(),View.INVISIBLE);
                 if(news.getFlag() == 0){
                     titleCheckBox.setChecked(false);
                 }else {
@@ -94,7 +93,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
                 if(news.getFlag()!=1){
                     ContentValues values = new ContentValues();
                     values.put(MetaData.TableMetaData.FIELD_FLAG,1);
-                    Uri uri = Uri.parse(MetaData.TableMetaData.CONTENT_URI.toString()+"/"+(mNewsList.size()-news.getId()));
+                    Uri uri = Uri.parse(MetaData.TableMetaData.CONTENT_URI.toString()+"/"+news.getId());
                     mContext.getContentResolver().update(uri,values,null,null);
                 }
 
