@@ -1,17 +1,11 @@
 package com.example.messagecenter;
 
-import android.annotation.SuppressLint;
-import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -21,7 +15,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
@@ -54,7 +47,7 @@ public class NewsTitleFragment extends Fragment implements View.OnClickListener 
     }
 
     /**
-     * 编辑等按钮功能实现
+     * 编辑等按钮功能实现=======================================================================================================
      */
     public void init(){
         editButton = view.findViewById(R.id.edit_button);
@@ -110,6 +103,7 @@ public class NewsTitleFragment extends Fragment implements View.OnClickListener 
                 break;
         }
     }
+    //===============================================================================================================
     /**
      * 从数据库中初始化模拟新闻数据
      * 将数据库的信息按倒序方式输出

@@ -1,53 +1,38 @@
 package com.example.messagecenter;
 
-import android.content.ComponentName;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Intent;
-import android.database.Cursor;
+import android.app.Fragment;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-public class MainActivity extends AppCompatActivity {
-
-    private String newsId;
-
-    private Button addButton;
-    private Button queryButton;
-    private Button deleteButton;
-    private Button updateButton;
-    private Button queryAllButton;
-    private Button deleteTechButton;
-
-
-    private EditText titleText;
-    private EditText messageText;
-    private EditText typeText;
-    private EditText idText;
-
-    private boolean isTag = true;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+    Button editButton;//编辑
+    Button selectAllButton;//全选
+    Button readedButton;//已读
+    Button deleteButton;//删除
+    NewsContenterFragment newsContentFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-            Intent intent = new Intent("com.example.messagecenter.STARTSERVICE");
-            intent.setComponent(new ComponentName("com.example.messagecenter","com.example.messagecenter.StartService"));
-            sendBroadcast(intent);
+        init();
+        RecyclerView newsTitleRecyclerView = findViewById(R.id.news_title_recycler_view);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        newsTitleRecyclerView.setLayoutManager(layoutManager);
+        NewsAdapter adapter = new NewsAdapter(this,newsContentFragment);
+        newsTitleRecyclerView.setAdapter(adapter);
+//        Intent intent = new Intent("com.example.messagecenter.STARTSERVICE");
+//        intent.setComponent(new ComponentName("com.example.messagecenter","com.example.messagecenter.StartService"));
+//        sendBroadcast(intent);
+
 
 
         //===============================设置编辑功能====================================
@@ -278,7 +263,61 @@ public class MainActivity extends AppCompatActivity {
 //                }
 //            }
 //        });
-
-
     }
-}
+    /**
+     * 编辑等按钮功能实现=======================================================================================================
+     */
+    public void init(){
+        editButton = findViewById(R.id.edit_button);
+        selectAllButton = findViewById(R.id.selectall_button);
+        readedButton = (Button) findViewById(R.id.readed_button);
+        deleteButton = findViewById(R.id.delete_main_button);
+        newsContentFragment = (NewsContenterFragment) getSupportFragmentManager().findFragmentById(R.id.news_content_fragment);
+        editButton.setOnClickListener(this);
+        selectAllButton.setOnClickListener(this);
+        readedButton.setOnClickListener(this);
+        deleteButton.setOnClickListener(this);
+    }
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.edit_button:
+                if(editButton.getText().equals("编辑")) {
+                    editButton.setText("取消");
+                    selectAllButton.setVisibility(View.VISIBLE);
+                    readedButton.setVisibility(View.VISIBLE);
+                    deleteButton.setVisibility(View.VISIBLE);
+                    readedButton.setEnabled(false);
+                    readedButton.setTextColor(Color.parseColor("#CCCCCC"));
+                    deleteButton.setEnabled(false);
+                    deleteButton.setTextColor(Color.parseColor("#CCCCCC"));
+                } else {
+                    editButton.setText("编辑");
+                    selectAllButton.setVisibility(View.INVISIBLE);
+                    readedButton.setVisibility(View.INVISIBLE);
+                    deleteButton.setVisibility(View.INVISIBLE);
+                }
+                break;
+            case R.id.selectall_button:
+                if(selectAllButton.getText().equals("全选")) {
+                    selectAllButton.setText("取消全选");
+                    readedButton.setEnabled(true);
+                    readedButton.setTextColor(Color.parseColor("#FFFFFF"));
+                    deleteButton.setEnabled(true);
+                    deleteButton.setTextColor(Color.parseColor("#FFFFFF"));
+                } else {
+                    selectAllButton.setText("全选");
+                    readedButton.setEnabled(false);
+                    readedButton.setTextColor(Color.parseColor("#CCCCCC"));
+                    deleteButton.setEnabled(false);
+                    deleteButton.setTextColor(Color.parseColor("#CCCCCC"));
+                }
+                break;
+            case R.id.readed_button:
+                Toast.makeText(this,"已读！",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.delete_main_button:
+                Toast.makeText(this,"删除成功！",Toast.LENGTH_SHORT).show();
+                break;
+        }
+}}

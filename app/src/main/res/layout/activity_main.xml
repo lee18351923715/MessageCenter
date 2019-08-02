@@ -2,36 +2,81 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
+    android:orientation="horizontal">
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="40">
 
-        <fragment
-            android:id="@+id/news_title_fragment"
-            android:name="com.example.messagecenter.NewsTitleFragment"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="40" />
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="#000000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="消息中心"
+            android:textColor="#F8F8FF"
+            android:background="#000000"
+            android:textSize="20sp"
+            android:paddingLeft="10dp"/>
 
-        <FrameLayout
-            android:id="@+id/news_content_layout"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="40">
-
-            <fragment
-                android:id="@+id/news_content_fragment"
-                android:name="com.example.messagecenter.NewsContenterFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="#000000"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/selectall_button"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="270dp"
+                android:background="#000000"
+                android:text="全选"
+                android:textColor="#F8F8FF"
+                android:textSize="14sp"
+                android:visibility="invisible" />
+            <Button
+                android:id="@+id/readed_button"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:background="#000000"
+                android:text="已读"
+                android:textColor="#F8F8FF"
+                android:textSize="14sp"
+                android:layout_marginLeft="0dp"
+                android:visibility="invisible"/>
+            <Button
+                android:id="@+id/delete_main_button"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:background="#000000"
+                android:text="删除"
+                android:textColor="#F8F8FF"
+                android:textSize="14sp"
+                android:layout_marginLeft="0dp"
+                android:visibility="invisible"/>
+            <Button
+                android:id="@+id/edit_button"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:background="#000000"
+                android:text="编辑"
+                android:textColor="#F8F8FF"
+                android:textSize="14sp"
+                android:layout_marginLeft="0dp"/>
+        </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/news_title_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </LinearLayout>
+    <View
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="#000000"/>
+    <fragment
+        android:id="@+id/news_content_fragment"
+        android:name="com.example.messagecenter.NewsContenterFragment"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="40"/>
 </LinearLayout>
