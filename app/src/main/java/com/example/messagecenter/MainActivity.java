@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         newsTitleRecyclerView.setLayoutManager(layoutManager);
         NewsAdapter adapter = new NewsAdapter(this,newsContentFragment);
         newsTitleRecyclerView.setAdapter(adapter);
+
 //        Intent intent = new Intent("com.example.messagecenter.STARTSERVICE");
 //        intent.setComponent(new ComponentName("com.example.messagecenter","com.example.messagecenter.StartService"));
 //        sendBroadcast(intent);

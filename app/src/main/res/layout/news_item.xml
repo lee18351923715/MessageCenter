@@ -42,7 +42,10 @@
         </FrameLayout>
 
     </LinearLayout>
-
+<com.example.messagecenter.LeftDeleteView
+    android:id="@+id/left_delete_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <LinearLayout
         android:id="@+id/layout_content"
         android:layout_width="wrap_content"
@@ -87,5 +90,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="删除"
-        android:id="@+id/tv_delete"/>
+        android:textColor="#FFFFFF"
+        android:background="@drawable/red"
+        android:id="@+id/tv_delete"
+        android:gravity="center"/>
+</com.example.messagecenter.LeftDeleteView>
+
 </LinearLayout>
