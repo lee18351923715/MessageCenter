@@ -1,6 +1,5 @@
 package com.example.messagecenter;
 
-import android.app.Fragment;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -25,76 +24,107 @@ import java.util.Map;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
+    private OnItemClickListener mOnItemClickListener;
+
+    private static final int MYLIVE_MODE_CHECK = 0;
+    int mEditMode = MYLIVE_MODE_CHECK;
+
+    public void setmEditMode(int mEditMode) {
+        this.mEditMode = mEditMode;
+        notifyDataSetChanged();
+    }
+
     NewsContenterFragment newsContentFragment;
 
     private Context mContext;
 
-    private Map<Integer, Integer> visibleMap = new HashMap<>();//用来记录是否显示复选框
+    private Map<Integer, Integer> visibleMap = new HashMap<>();//用来记录是否显示阅读复选框
 
     /**
      * 数据源
      */
     private List<News> mNewsList;
 
-    private Map<Integer, Boolean> checkStatus = new HashMap<>();//用来记录所有checkbox的状态
+    public List<News> getmNewsList() {
+        if (mNewsList == null) {
+            mNewsList = new ArrayList<>();
+        }
+        return mNewsList;
+    }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+
+
+    private Map<Integer, Boolean> checkStatus = new HashMap<>();//用来记录所有checkbox的状态
+    private Map<Integer, Boolean> checkStatus_select = new HashMap<>();//用来记录所有选中的状态
+    public Map<Integer, Boolean> getCheckStatus_select(){
+        return checkStatus_select;
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
         private TextView newsTitleText;
         private CheckBox titleCheckBox;
         private TextView newsMessage;
         private TextView newsTime;
+        private CheckBox selectCheckBox;
 
-        public ViewHolder(View view){
+        public ViewHolder(View view) {
             super(view);
             newsTitleText = view.findViewById(R.id.news_title);
             titleCheckBox = view.findViewById(R.id.cb_button);
             newsMessage = view.findViewById(R.id.news_content);
             newsTime = view.findViewById(R.id.news_date);
+            selectCheckBox = view.findViewById(R.id.select_button);
         }
     }
 
-    public NewsAdapter(Context context, NewsContenterFragment fragment){
+
+    public NewsAdapter(Context context, NewsContenterFragment fragment, List<News> list) {
         mContext = context;
         newsContentFragment = fragment;
-        mNewsList = getNews();
-        Cursor cursor = mContext.getContentResolver().query(MetaData.TableMetaData.CONTENT_URI,new String[]{ "id",
-                MetaData.TableMetaData.FIELD_FLAG,MetaData.TableMetaData.FIELD_TYPE},null,null,null);
-        while (cursor.moveToNext()){
+        mNewsList = list;
+        Cursor cursor = mContext.getContentResolver().query(MetaData.TableMetaData.CONTENT_URI, new String[]{"id",
+                MetaData.TableMetaData.FIELD_FLAG, MetaData.TableMetaData.FIELD_TYPE}, null, null, null);
+        while (cursor.moveToNext()) {
             int flag = cursor.getInt(cursor.getColumnIndex("flag"));//获取是否已读
             int id = cursor.getInt(cursor.getColumnIndex("id"));
-            if(flag == 0){
-                checkStatus.put(id,true);
-                visibleMap.put(id,View.VISIBLE);
-            }else if(flag == 1){
-                checkStatus.put(id,false);
+            if (flag == 0) {
+                checkStatus.put(id, true);
+                visibleMap.put(id, View.VISIBLE);
+            } else if (flag == 1) {
+                checkStatus.put(id, false);
                 visibleMap.put(id, View.INVISIBLE);
             }
+            checkStatus_select.put(id,false);
         }
         cursor.close();
     }
 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.news_item,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.news_item, parent, false);
+        CheckBox selectCheckedBox = view.findViewById(R.id.select_button);
+
+        selectCheckedBox.setVisibility(View.INVISIBLE);
         final ViewHolder holder = new ViewHolder(view);
+
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 CheckBox titleCheckBox = view.findViewById(R.id.cb_button);
                 News news = mNewsList.get(holder.getAdapterPosition());
-                checkStatus.put(news.getId(),false);
-                visibleMap.put(news.getId(),View.INVISIBLE);
-                if(news.getFlag() == 0){
+                checkStatus.put(news.getId(), false);
+                visibleMap.put(news.getId(), View.INVISIBLE);
+                if (news.getFlag() == 0) {
                     titleCheckBox.setChecked(false);
-                }else {
+                } else {
                     titleCheckBox.setVisibility(View.INVISIBLE);
                 }
-               newsContentFragment.refresh(news.getTitle(),news.getMessage(), news.getType());
-                if(news.getFlag()!=1){
+                newsContentFragment.refresh(news.getTitle(), news.getMessage(), news.getType());
+                if (news.getFlag() != 1) {
                     ContentValues values = new ContentValues();
-                    values.put(MetaData.TableMetaData.FIELD_FLAG,1);
-                    Uri uri = Uri.parse(MetaData.TableMetaData.CONTENT_URI.toString()+"/"+news.getId());
-                    mContext.getContentResolver().update(uri,values,null,null);
+                    values.put(MetaData.TableMetaData.FIELD_FLAG, 1);
+                    Uri uri = Uri.parse(MetaData.TableMetaData.CONTENT_URI.toString() + "/" + news.getId());
+                    mContext.getContentResolver().update(uri, values, null, null);
                 }
 
             }
@@ -109,66 +139,62 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         holder.newsTitleText.setText(news.getTitle());
         holder.newsMessage.setText(news.getMessage());
         holder.newsTime.setText(news.getTime());
-        //=======================解决checkBox混乱问题==================================================
-        holder.titleCheckBox.setOnCheckedChangeListener(null);//清掉监听器
-        holder.titleCheckBox.setChecked(checkStatus.get(id));//设置选中状态
-        holder.titleCheckBox.setVisibility(visibleMap.get(id));
+        if (mEditMode == MYLIVE_MODE_CHECK) {//非编辑状态
+            //=======================解决checkBox混乱问题==================================================
+            holder.titleCheckBox.setOnCheckedChangeListener(null);//清掉监听器
+            holder.titleCheckBox.setChecked(checkStatus.get(id));//设置选中状态
 
-        holder.titleCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {//再设置监听器
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                checkStatus.put(id, isChecked);
-                if(isChecked){
-                    visibleMap.put(id,View.VISIBLE);
-                }else {
-                    visibleMap.put(id,View.INVISIBLE);
-                    holder.titleCheckBox.setVisibility(View.INVISIBLE);
+            holder.selectCheckBox.setVisibility(View.INVISIBLE);
+
+            holder.titleCheckBox.setVisibility(visibleMap.get(id));
+            holder.titleCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {//再设置监听器
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    checkStatus.put(id, isChecked);
+                    if (isChecked) {
+                        visibleMap.put(id, View.VISIBLE);
+                    } else {
+                        visibleMap.put(id, View.INVISIBLE);
+                        holder.titleCheckBox.setVisibility(View.INVISIBLE);
+                    }
+
                 }
-
+            });
+            // 设置CheckBox的状态
+            if (checkStatus.get(id) == null) {
+                checkStatus.put(id, false);
             }
-        });
-        // 设置CheckBox的状态
-        if (checkStatus.get(id) == null) {
-            checkStatus.put(id, false);
+            holder.titleCheckBox.setChecked(checkStatus.get(id));
+            holder.titleCheckBox.setVisibility(visibleMap.get(id));
+        } else {//编辑状态
+            //=======================解决checkBox混乱问题==================================================
+            holder.selectCheckBox.setOnCheckedChangeListener(null);//清掉监听器
+            holder.selectCheckBox.setChecked(checkStatus_select.get(id));//设置选中状态
+            holder.selectCheckBox.setVisibility(View.VISIBLE);
+            holder.titleCheckBox.setVisibility(View.INVISIBLE);
+            holder.selectCheckBox.setChecked(news.isSelect());
+            holder.selectCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {//再设置监听器
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    checkStatus_select.put(id,true);
+                }
+            });
+            //Toast.makeText(mContext,checkStatus_select.size(),Toast.LENGTH_SHORT).show();
+            if(checkStatus_select.get(id) == null){
+                checkStatus_select.put(id,false);
+            }
         }
-        holder.titleCheckBox.setChecked(checkStatus.get(id));
-        holder.titleCheckBox.setVisibility(visibleMap.get(id));
-
     }
 
     @Override
     public int getItemCount() {
         return mNewsList.size();
     }
-    /**
-     * 从数据库中初始化模拟新闻数据
-     * 将数据库的信息按倒序方式输出
-     */
-    private List<News> getNews() {
-        List<News> mNewsList = new ArrayList<>();
-        Cursor cursor = mContext.getContentResolver().query(MetaData.TableMetaData.CONTENT_URI,new String[]{ "id",MetaData.TableMetaData.FIELD_TITLE,MetaData.TableMetaData.FIELD_MESSAGE,
-                MetaData.TableMetaData.FIELD_FLAG,MetaData.TableMetaData.FIELD_TIME,MetaData.TableMetaData.FIELD_TYPE},null,null,null);
-        if(cursor == null){
-            Toast.makeText(mContext,"当前没有数据",Toast.LENGTH_SHORT).show();
-            return null;
-        }
-        while (cursor.moveToNext()){
-            int id = cursor.getInt(cursor.getColumnIndex("id"));
-            String title = cursor.getString(cursor.getColumnIndex("title"));
-            String message = cursor.getString(cursor.getColumnIndex("message"));
-            int flag = cursor.getInt(cursor.getColumnIndex("flag"));
-            String time = cursor.getString(cursor.getColumnIndex("time"));
-            int type = cursor.getInt(cursor.getColumnIndex("type"));
-            News news = new News(id,title,message,flag,time,type);
-            mNewsList.add(news);
-        }
-        cursor.close();
-        Collections.reverse(mNewsList);
-        return mNewsList;
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.mOnItemClickListener = onItemClickListener;
     }
-
-
-
-
-
+    public interface OnItemClickListener {
+        void onItemClickListener(int pos,List<News> newsList);
+    }
 }

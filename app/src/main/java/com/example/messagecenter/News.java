@@ -35,6 +35,16 @@ public class News {
 
     private int type;
 
+    private boolean select;
+
+    public boolean isSelect() {
+        return select;
+    }
+
+    public void setSelect(boolean select) {
+        this.select = select;
+    }
+
     public int getId() {
         return id;
     }

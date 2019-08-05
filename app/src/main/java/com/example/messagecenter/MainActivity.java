@@ -1,10 +1,13 @@
 package com.example.messagecenter;
 
-import android.app.Fragment;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,12 +16,31 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, NewsAdapter.OnItemClickListener {
+
+    private static final int MYLIVE_MODE_CHECK = 0;
+    private static final int MYLIVE_MODE_EDIT = 1;
+
+    private boolean isSelectAll = false;
+    private boolean editorStatus = false;
+    private int index = 0;
+
+    private List<News> mList = new ArrayList<>();
+
     Button editButton;//编辑
     Button selectAllButton;//全选
     Button readedButton;//已读
     Button deleteButton;//删除
     NewsContenterFragment newsContentFragment;
+    NewsAdapter adapter;
+    TextView mTvSelectNum;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,51 +50,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         RecyclerView newsTitleRecyclerView = findViewById(R.id.news_title_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         newsTitleRecyclerView.setLayoutManager(layoutManager);
-        NewsAdapter adapter = new NewsAdapter(this,newsContentFragment);
+        adapter = new NewsAdapter(this, newsContentFragment, mList);
+
         newsTitleRecyclerView.setAdapter(adapter);
 
 //        Intent intent = new Intent("com.example.messagecenter.STARTSERVICE");
 //        intent.setComponent(new ComponentName("com.example.messagecenter","com.example.messagecenter.StartService"));
 //        sendBroadcast(intent);
 
-
-
-        //===============================设置编辑功能====================================
-//        final Button editButton = findViewById(R.id.edit_button);
-//        final Button selectAllButton = findViewById(R.id.selectall_button);
-//        final Button readedButton = findViewById(R.id.readed_button);
-//        final Button deleteButton = findViewById(R.id.delete_main_button);
-//        final CheckBox cb_button = findViewById(R.id.cb_button);
-//        /**
-//         * 点击编辑按钮
-//         */
-//        editButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                editButton.setText("取消");
-//                selectAllButton.setVisibility(View.VISIBLE);
-//                readedButton.setVisibility(View.VISIBLE);
-//                deleteButton.setVisibility(View.VISIBLE);
-//                readedButton.setEnabled(false);
-//                readedButton.setTextColor(Color.parseColor("#CCCCCC"));
-//                deleteButton.setEnabled(false);
-//                deleteButton.setTextColor(Color.parseColor("#CCCCCC"));
-//                //cb_button.setChecked(false);
-//                /**
-//                 * 点击全选按钮
-//                 */
-//                selectAllButton.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        readedButton.setEnabled(true);
-//                        readedButton.setTextColor(Color.parseColor("#F8F8FF"));
-//                        deleteButton.setEnabled(true);
-//                        deleteButton.setTextColor(Color.parseColor("#F8F8FF"));
-//
-//                    }
-//                });
-//            }
-//        });
 
         //===============================数据库功能======================================
 
@@ -266,25 +251,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            }
 //        });
     }
+
     /**
      * 编辑等按钮功能实现=======================================================================================================
      */
-    public void init(){
+    public void init() {
         editButton = findViewById(R.id.edit_button);
         selectAllButton = findViewById(R.id.selectall_button);
-        readedButton = (Button) findViewById(R.id.readed_button);
+        readedButton = findViewById(R.id.readed_button);
         deleteButton = findViewById(R.id.delete_main_button);
+        mTvSelectNum =findViewById(R.id.tv_select_num);
+        mList = getNews();
         newsContentFragment = (NewsContenterFragment) getSupportFragmentManager().findFragmentById(R.id.news_content_fragment);
         editButton.setOnClickListener(this);
         selectAllButton.setOnClickListener(this);
         readedButton.setOnClickListener(this);
         deleteButton.setOnClickListener(this);
     }
+
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.edit_button:
-                if(editButton.getText().equals("编辑")) {
+                if (editButton.getText().equals("编辑")) {
                     editButton.setText("取消");
                     selectAllButton.setVisibility(View.VISIBLE);
                     readedButton.setVisibility(View.VISIBLE);
@@ -293,33 +282,136 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     readedButton.setTextColor(Color.parseColor("#CCCCCC"));
                     deleteButton.setEnabled(false);
                     deleteButton.setTextColor(Color.parseColor("#CCCCCC"));
+                    adapter.setmEditMode(MYLIVE_MODE_EDIT);
                 } else {
                     editButton.setText("编辑");
                     selectAllButton.setVisibility(View.INVISIBLE);
                     readedButton.setVisibility(View.INVISIBLE);
                     deleteButton.setVisibility(View.INVISIBLE);
+                    adapter.setmEditMode(MYLIVE_MODE_CHECK);
                 }
                 break;
             case R.id.selectall_button:
-                if(selectAllButton.getText().equals("全选")) {
-                    selectAllButton.setText("取消全选");
-                    readedButton.setEnabled(true);
-                    readedButton.setTextColor(Color.parseColor("#FFFFFF"));
-                    deleteButton.setEnabled(true);
-                    deleteButton.setTextColor(Color.parseColor("#FFFFFF"));
-                } else {
-                    selectAllButton.setText("全选");
-                    readedButton.setEnabled(false);
-                    readedButton.setTextColor(Color.parseColor("#CCCCCC"));
-                    deleteButton.setEnabled(false);
-                    deleteButton.setTextColor(Color.parseColor("#CCCCCC"));
-                }
+//                if (selectAllButton.getText().equals("全选")) {
+//                    selectAllButton.setText("取消全选");
+//                    readedButton.setEnabled(true);
+//                    readedButton.setTextColor(Color.parseColor("#FFFFFF"));
+//                    deleteButton.setEnabled(true);
+//                    deleteButton.setTextColor(Color.parseColor("#FFFFFF"));
+//                } else {
+//                    selectAllButton.setText("全选");
+//                    readedButton.setEnabled(false);
+//                    readedButton.setTextColor(Color.parseColor("#CCCCCC"));
+//                    deleteButton.setEnabled(false);
+//                    deleteButton.setTextColor(Color.parseColor("#CCCCCC"));
+//                }
+                selectAllMain();
                 break;
             case R.id.readed_button:
-                Toast.makeText(this,"已读！",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "已读！", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.delete_main_button:
-                Toast.makeText(this,"删除成功！",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "删除成功！", Toast.LENGTH_SHORT).show();
                 break;
         }
-}}
+    }
+
+
+    /**
+     * 从数据库中初始化模拟新闻数据
+     * 将数据库的信息按倒序方式输出
+     */
+    private List<News> getNews() {
+        List<News> mNewsList = new ArrayList<>();
+        Cursor cursor = this.getContentResolver().query(MetaData.TableMetaData.CONTENT_URI, new String[]{"id", MetaData.TableMetaData.FIELD_TITLE, MetaData.TableMetaData.FIELD_MESSAGE,
+                MetaData.TableMetaData.FIELD_FLAG, MetaData.TableMetaData.FIELD_TIME, MetaData.TableMetaData.FIELD_TYPE}, null, null, null);
+        if (cursor == null) {
+            Toast.makeText(this, "当前没有数据", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndex("id"));
+            String title = cursor.getString(cursor.getColumnIndex("title"));
+            String message = cursor.getString(cursor.getColumnIndex("message"));
+            int flag = cursor.getInt(cursor.getColumnIndex("flag"));
+            String time = cursor.getString(cursor.getColumnIndex("time"));
+            int type = cursor.getInt(cursor.getColumnIndex("type"));
+            News news = new News(id, title, message, flag, time, type);
+            mNewsList.add(news);
+        }
+        cursor.close();
+        Collections.reverse(mNewsList);
+        return mNewsList;
+    }
+
+    /**
+     * 根据选择的数量是否为0来判断按钮的是否可点击.
+     */
+    private void setBtnBackground(int size) {
+        if (size != 0) {
+            readedButton.setEnabled(true);
+            readedButton.setTextColor(Color.parseColor("#FFFFFF"));
+            deleteButton.setEnabled(true);
+            deleteButton.setTextColor(Color.parseColor("#FFFFFF"));
+        }else {
+            readedButton.setEnabled(false);
+            readedButton.setTextColor(Color.parseColor("#CCCCCC"));
+            deleteButton.setEnabled(false);
+            deleteButton.setTextColor(Color.parseColor("#CCCCCC"));
+        }
+    }
+
+    /**
+     * 全选和反选
+     */
+    private void selectAllMain() {
+        if(adapter == null){
+            return;
+        }
+        if (!isSelectAll) {
+            for(int i=0; i<adapter.getmNewsList().size(); i++){
+                adapter.getmNewsList().get(i).setSelect(true);
+            }
+            index = adapter.getmNewsList().size();
+            selectAllButton.setText("取消全选");
+            isSelectAll = true;
+        }else {
+            for(int i=0; i<adapter.getmNewsList().size(); i++){
+                adapter.getmNewsList().get(i).setSelect(false);
+            }
+            index = 0;
+            selectAllButton.setText("全选");
+            isSelectAll = false;
+        }
+        mTvSelectNum.setText(String.valueOf(index));
+        adapter.notifyDataSetChanged();
+        setBtnBackground(index);
+
+    }
+
+
+    @Override
+    public void onItemClickListener(int pos, List<News> newsList) {
+        if(editorStatus){
+            News news = newsList.get(pos);
+            boolean isSelect = news.isSelect();
+            if(!isSelect){
+                index++;
+                news.setSelect(true);
+                if(index == newsList.size()){
+                    isSelectAll = true;
+                    selectAllButton.setText("取消全选");
+                }
+            }else {
+                news.setSelect(false);
+                index--;
+                isSelectAll = false;
+                selectAllButton.setText("取消全选");
+            }
+        }
+        mTvSelectNum.setText(String.valueOf(index));
+        adapter.notifyDataSetChanged();
+        setBtnBackground(index);
+
+    }
+}

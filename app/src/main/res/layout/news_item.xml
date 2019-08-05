@@ -22,30 +22,31 @@
                 android:checked="true"
                 android:clickable="true"
                 android:focusable="true"
-                android:scaleX="0.3"
-                android:scaleY="0.3"
-                android:visibility="invisible" />
+                android:scaleX="0.4"
+                android:scaleY="0.4"
+                android:visibility="visible" />
 
             <CheckBox
                 android:id="@+id/select_button"
-
+                style="@style/rightCheckBoxTheme"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@null"
+                android:layout_gravity="center_horizontal"
                 android:checked="false"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_gravity="center_vertical"
                 android:gravity="center_horizontal"
+                android:scaleX="0.4"
+                android:scaleY="0.4"
                 android:visibility="visible" />
 
         </FrameLayout>
 
     </LinearLayout>
-<com.example.messagecenter.LeftDeleteView
+<!--<com.example.messagecenter.LeftDeleteView
     android:id="@+id/left_delete_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent">-->
     <LinearLayout
         android:id="@+id/layout_content"
         android:layout_width="wrap_content"
@@ -94,6 +95,6 @@
         android:background="@drawable/red"
         android:id="@+id/tv_delete"
         android:gravity="center"/>
-</com.example.messagecenter.LeftDeleteView>
+<!--</com.example.messagecenter.LeftDeleteView>-->
 
 </LinearLayout>
