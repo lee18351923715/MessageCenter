@@ -1,16 +1,12 @@
 package com.example.messagecenter;
 
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.SurfaceControl;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,10 +42,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button readedButton;//已读
     Button deleteButton;//删除
     NewsContenterFragment newsContentFragment;
+    RecyclerView newsTitleRecyclerView;
+    LinearLayoutManager layoutManager;
+
     NewsAdapter adapter;
     TextView mTvSelectNum;
-    Fragment f1;
+    Fragment f1;//删除时候出现的页面布局
     Button cancel;//取消删除操作
+    int num = 0;//未读消息数量
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,10 +57,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         init();
         adapter = new NewsAdapter(this, newsContentFragment, mList);
-        RecyclerView newsTitleRecyclerView = findViewById(R.id.news_title_recycler_view);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        newsTitleRecyclerView = findViewById(R.id.news_title_recycler_view);
+        layoutManager = new LinearLayoutManager(this);
         newsTitleRecyclerView.setLayoutManager(layoutManager);
         newsTitleRecyclerView.setAdapter(adapter);
+        mTvSelectNum.setText(String.valueOf(num));
         initListener();
 //        Intent intent = new Intent("com.example.messagecenter.STARTSERVICE");
 //        intent.setComponent(new ComponentName("com.example.messagecenter","com.example.messagecenter.StartService"));
@@ -272,7 +273,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mTvSelectNum =findViewById(R.id.tv_select_num);
         newsContentFragment = (NewsContenterFragment) getSupportFragmentManager().findFragmentById(R.id.news_content_fragment);
     }
-
     public void initListener(){
         editButton.setOnClickListener(this);
         selectAllButton.setOnClickListener(this);
@@ -292,22 +292,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 selectAllMain();
                 break;
             case R.id.readed_button:
-                Toast.makeText(this, "已读！", Toast.LENGTH_SHORT).show();
                 readed();
                 break;
             case R.id.delete_main_button:
-                Toast.makeText(this, "删除成功！", Toast.LENGTH_SHORT).show();
                 deleteVideo();
+                break;
+            case R.id.cancel_button://取消功能
+                cancel();
+                break;
+            case R.id.sure_button://删除功能
                 break;
         }
     }
-
-
     /**
      * 从数据库中初始化模拟新闻数据
      * 将数据库的信息按倒序方式输出
      */
     private List<News> getNews() {
+        num = 0;
         List<News> mNewsList = new ArrayList<>();
         Cursor cursor = this.getContentResolver().query(MetaData.TableMetaData.CONTENT_URI, new String[]{"id", MetaData.TableMetaData.FIELD_TITLE, MetaData.TableMetaData.FIELD_MESSAGE,
                 MetaData.TableMetaData.FIELD_FLAG, MetaData.TableMetaData.FIELD_TIME, MetaData.TableMetaData.FIELD_TYPE}, null, null, null);
@@ -324,6 +326,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             int type = cursor.getInt(cursor.getColumnIndex("type"));
             News news = new News(id, title, message, flag, time, type, false);
             mNewsList.add(news);
+            if(flag == 0){
+                num++;
+            }
         }
         cursor.close();
         Collections.reverse(mNewsList);
@@ -369,7 +374,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             selectAllButton.setText("全选");
             isSelectAll = false;
         }
-        mTvSelectNum.setText(String.valueOf(index));
+        //mTvSelectNum.setText(String.valueOf(index));
         adapter.notifyDataSetChanged();
         setBtnBackground(index);
 
@@ -383,6 +388,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (mEditMode == MYLIVE_MODE_EDIT) {
             editButton.setText("取消");
             selectAllButton.setVisibility(View.VISIBLE);
+            selectAllButton.setText("全选");
             readedButton.setVisibility(View.VISIBLE);
             deleteButton.setVisibility(View.VISIBLE);
             readedButton.setEnabled(false);
@@ -399,10 +405,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             adapter.setmEditMode(MYLIVE_MODE_CHECK);
             editorStatus = false;
             index = 0;
-            mTvSelectNum.setText(String.valueOf(index));
+            //mTvSelectNum.setText(String.valueOf(index));
             if(newsContentFragment==null){
                 replaceFragment(newsContentFragment);
             }
+            for(int i=0; i<adapter.getmNewsList().size(); i++){
+                adapter.getmNewsList().get(i).setSelect(false);
+            }
+            isSelectAll = false;
+            adapter.notifyDataSetChanged();
         }
         adapter.setmEditMode(mEditMode);
     }
@@ -415,14 +426,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             deleteButton.setEnabled(false);
             return;
         }
+        selectAllButton.setVisibility(View.INVISIBLE);
+        readedButton.setVisibility(View.INVISIBLE);
+        deleteButton.setVisibility(View.INVISIBLE);
+        editButton.setVisibility(View.INVISIBLE);
         replaceFragment(f1);
-//        System.out.println(f1.getView()==null?"f1.getView()为空":"f1.getView()不为空");
-//        cancel.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                System.out.println("=================================取消");
-//            }
-//        });
+        //cancel = getSupportFragmentManager().findFragmentById(R.id.)
     }
 
     public void  replaceFragment(Fragment fragment){
@@ -452,7 +461,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 selectAllButton.setText("取消全选");
             }
         }
-        mTvSelectNum.setText(String.valueOf(index));
+        //mTvSelectNum.setText(String.valueOf(index));
         adapter.notifyDataSetChanged();
         setBtnBackground(index);
 
@@ -463,20 +472,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * 获取所有select=true的信息，将它们的flag更新为1
      */
     public void readed(){
-//        for (News news : mList) {
-//            if(news.isSelect()==true){
-//                modify(news);
-//            }
-//        }
         for(int i=0; i<mList.size(); i++){
             if(mList.get(i).isSelect()){
                 modify(mList.get(i));
+                adapter.notifyDataSetChanged();
                 adapter.notifyItemChanged(i);
+                adapter.setmEditMode(MYLIVE_MODE_CHECK);
+                num--;
             }
         }
+        adapter = new NewsAdapter(this,newsContentFragment,getNews());
+        newsTitleRecyclerView.setAdapter(adapter);
+        mTvSelectNum.setText(String.valueOf(num));
         editorStatus = false;
         updataEditMode();
-
     }
 
     public void modify(News news){
@@ -492,5 +501,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         f1 = new DeleteFragment();
     }
 
+    public void cancel(){
 
+    }
 }

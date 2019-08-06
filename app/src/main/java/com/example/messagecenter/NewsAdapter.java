@@ -40,12 +40,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     /**
      * 数据源
      */
-    private List<News> mNewsList;
+    private List<News> mNewsList = new ArrayList<>();
 
     public List<News> getmNewsList() {
-        if (mNewsList == null) {
-            mNewsList = new ArrayList<>();
-        }
         return mNewsList;
     }
 
