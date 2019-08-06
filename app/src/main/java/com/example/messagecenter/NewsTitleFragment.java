@@ -123,7 +123,7 @@ public class NewsTitleFragment extends Fragment implements View.OnClickListener 
             int flag = cursor.getInt(cursor.getColumnIndex("flag"));
             String time = cursor.getString(cursor.getColumnIndex("time"));
             int type = cursor.getInt(cursor.getColumnIndex("type"));
-            News news = new News(id,title,message,flag,time,type);
+            News news = new News(id,title,message,flag,time,type,false);
             mNewsList.add(news);
         }
         cursor.close();

@@ -93,13 +93,14 @@ public class News {
         this.type = type;
     }
 
-    public News(int id, String title, String message, int flag, String time, int type) {
+    public News(int id, String title, String message, int flag, String time, int type, boolean select) {
         this.id = id;
         this.title = title;
         this.message = message;
         this.flag = flag;
         this.time = time;
         this.type = type;
+        this.select = select;
     }
 
     @Override

@@ -88,10 +88,16 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="#000000"/>
-    <fragment
-        android:id="@+id/news_content_fragment"
-        android:name="com.example.messagecenter.NewsContenterFragment"
+    <FrameLayout
+        android:id="@+id/test"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="40"/>
+        android:layout_weight="40">
+        <fragment
+            android:id="@+id/news_content_fragment"
+            android:name="com.example.messagecenter.NewsContenterFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </FrameLayout>
+
 </LinearLayout>
