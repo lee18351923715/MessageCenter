@@ -177,7 +177,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
                     mOnItemClickListener.onItemClickListener(holder.getAdapterPosition(), mNewsList);
                 }
             });
-            //Toast.makeText(mContext,checkStatus_select.size(),Toast.LENGTH_SHORT).show();
             if(checkStatus_select.get(id) == null){
                 checkStatus_select.put(id,false);
             }
