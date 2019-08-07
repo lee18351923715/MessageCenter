@@ -5,20 +5,7 @@
     android:background="#282828"
     android:orientation="vertical"
     >
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="57dp"
-        android:background="#000000"
-        android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/refresh_button"
-            android:layout_width="50dp"
-            android:layout_height="35dp"
-            android:layout_marginLeft="300dp"
-            android:text="刷新"
-            android:textSize="10sp" />
-    </LinearLayout>
     <!--<View
         android:layout_width="match_parent"
         android:layout_height="57dp"

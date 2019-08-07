@@ -21,15 +21,17 @@
                 android:background="#000000"
                 android:textSize="20sp"
                 android:paddingLeft="10dp"/>
+
             <TextView
                 android:id="@+id/tv_select_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="9dp"
-                android:textColor="#F8F8FF"
+                android:layout_centerVertical="false"
+                android:layout_marginLeft="0dp"
+                android:layout_marginTop="0dp"
                 android:background="#CD0000"
-                android:text="0"/>
+                android:text="0"
+                android:textColor="#F8F8FF" />
         </LinearLayout>
 
 
@@ -78,26 +80,59 @@
                 android:textSize="14sp"
                 android:layout_marginLeft="0dp"/>
         </LinearLayout>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/news_title_recycler_view"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:background="#282828">
+            <TextView
+                android:id="@+id/no_message"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="无消息"
+                android:textSize="25sp"
+                android:textColor="#F8F8FF"
+                android:gravity="center"
+                android:visibility="invisible"
+                />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/news_title_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#282828"
+                android:visibility="visible"/>
+        </FrameLayout>
+
     </LinearLayout>
     <View
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="#000000"/>
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/test"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="40">
+        android:layout_weight="40"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="57dp"
+            android:background="#000000"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/refresh_button"
+                android:layout_width="50dp"
+                android:layout_height="35dp"
+                android:layout_marginLeft="300dp"
+                android:text="刷新"
+                android:textSize="10sp" />
+        </LinearLayout>
         <fragment
             android:id="@+id/news_content_fragment"
             android:name="com.example.messagecenter.NewsContenterFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-    </FrameLayout>
+    </LinearLayout>
 
 </LinearLayout>

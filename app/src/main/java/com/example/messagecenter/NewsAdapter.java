@@ -22,6 +22,7 @@ import java.util.Map;
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     private OnItemClickListener mOnItemClickListener;
+    private int num = 0;
 
     private static final int MYLIVE_MODE_CHECK = 0;
     int mEditMode = MYLIVE_MODE_CHECK;
@@ -84,6 +85,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             if (flag == 0) {
                 checkStatus.put(id, true);
                 visibleMap.put(id, View.VISIBLE);
+                num++;
             } else if (flag == 1) {
                 checkStatus.put(id, false);
                 visibleMap.put(id, View.INVISIBLE);
